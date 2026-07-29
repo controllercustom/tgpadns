@@ -1,0 +1,12 @@
+[submodule "lib/ESP32nslite"]
+	path = lib/ESP32nslite
+	url = https://github.com/controllercustom/ESP32nslite.git
+[submodule "lib/WiFiManager"]
+	path = lib/WiFiManager
+	url = https://github.com/tzapu/WiFiManager.git
+[submodule "lib/WebSockets"]
+	path = lib/WebSockets
+	url = https://github.com/Links2004/arduinoWebSockets.git
+[submodule "lib/M5GFX"]
+	path = lib/M5GFX
+	url = https://github.com/m5stack/M5GFX.git

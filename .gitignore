@@ -1,0 +1,6 @@
+build/
+__pycache__/
+.pytest_cache/
+mydocs/
+docs/firmware/
+docs/firmware.json
