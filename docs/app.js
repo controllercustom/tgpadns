@@ -209,4 +209,6 @@ els.flashBtn.addEventListener('click', flash);
   }
 
   updateInstructions();
+
+  setStatus('Ready', 'ready');
 })();
