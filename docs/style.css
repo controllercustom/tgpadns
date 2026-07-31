@@ -25,13 +25,13 @@ html, body {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 960px;
     margin: 0 auto;
     padding: 24px 16px;
 }
 
 h1 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
     margin: 0 0 4px;
     color: var(--accent);
@@ -43,12 +43,54 @@ h1 {
     margin: 0 0 24px;
 }
 
+.main-row {
+    display: flex;
+    gap: 16px;
+}
+
+.flash-card, .log-card {
+    flex: 1;
+    min-width: 0;
+}
+
 .card {
     background: var(--bg-card);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 16px;
     border: 1px solid var(--border);
+}
+
+.flash-card, .log-card {
+    margin-bottom: 0;
+}
+
+.about-card h2 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 8px;
+}
+
+.about-card p {
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.about-card a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.about-card a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
 }
 
 .form-group {
@@ -262,10 +304,24 @@ select:hover, select:focus {
     margin-top: 4px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+    .main-row {
+        flex-direction: column;
+    }
+
+    .flash-card, .log-card {
+        margin-bottom: 16px;
+    }
+
     .container {
         padding: 16px 12px;
     }
+    h1 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
     h1 {
         font-size: 20px;
     }

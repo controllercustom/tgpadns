@@ -6,6 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>TGPad-NS Firmware Flasher</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,42 +14,44 @@
         <h1>TGPad-NS Firmware Flasher</h1>
         <p class="subtitle">Flash TGPad-NS firmware to your ESP32-S3 board via browser</p>
 
-        <div class="card">
-            <div id="status-bar">
-                <span id="status-text">Initializing...</span>
-                <span id="status-badge" class="status-badge ready">ready</span>
+        <div class="main-row">
+            <div class="card flash-card">
+                <div id="status-bar">
+                    <span id="status-text">Initializing...</span>
+                    <span id="status-badge" class="status-badge ready">ready</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="board">Board Type</label>
+                    <select id="board">
+                        <option value="atoms3">M5Stack AtomS3</option>
+                        <option value="esp32s3">Generic ESP32-S3 Dev Module</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="version">Firmware Version</label>
+                    <select id="version">
+                        <option value="">Loading...</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="erase-all">
+                    <label for="erase-all">Erase all flash before flashing</label>
+                </div>
+
+                <button id="flash-btn" class="btn">Flash Firmware</button>
+
+                <div id="progress-container">
+                    <div id="progress-bar"><div id="progress-fill"></div></div>
+                    <div id="progress-text"></div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="board">Board Type</label>
-                <select id="board">
-                    <option value="atoms3">M5Stack AtomS3</option>
-                    <option value="esp32s3">Generic ESP32-S3 Dev Module</option>
-                </select>
+            <div class="card log-card">
+                <pre id="log"></pre>
             </div>
-
-            <div class="form-group">
-                <label for="version">Firmware Version</label>
-                <select id="version">
-                    <option value="">Loading...</option>
-                </select>
-            </div>
-
-            <div class="checkbox-group">
-                <input type="checkbox" id="erase-all">
-                <label for="erase-all">Erase all flash before flashing</label>
-            </div>
-
-            <button id="flash-btn" class="btn">Flash Firmware</button>
-
-            <div id="progress-container">
-                <div id="progress-bar"><div id="progress-fill"></div></div>
-                <div id="progress-text"></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <pre id="log"></pre>
         </div>
 
         <div class="card instructions" id="instructions-content">
@@ -77,6 +80,14 @@
                     <li>Click <strong>Flash Firmware</strong> above and select the device in the browser serial prompt</li>
                 </ol>
             </div>
+        </div>
+
+        <div class="card about-card">
+            <h2>About TGPad-NS</h2>
+            <p>TGPad-NS turns your phone or tablet into a Nintendo Switch-style gamepad controller. It runs on an ESP32-S3 board with native USB HID output — no drivers needed on the host computer.</p>
+            <p style="margin-top:12px">
+                <a href="https://github.com/controllercustom/tgpadns" target="_blank">View on GitHub →</a>
+            </p>
         </div>
     </div>
 
