@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>TGPad-NS Firmware Flasher</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TGPad-NS Firmware Flasher</h1>
+        <p class="subtitle">Flash TGPad-NS firmware to your ESP32-S3 board via browser</p>
+
+        <div class="main-row">
+            <div class="card flash-card">
+                <div id="status-bar">
+                    <span id="status-text">Initializing...</span>
+                    <span id="status-badge" class="status-badge ready">ready</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="board">Board Type</label>
+                    <select id="board">
+                        <option value="atoms3">M5Stack AtomS3</option>
+                        <option value="esp32s3">Generic ESP32-S3 Dev Module</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="version">Firmware Version</label>
+                    <select id="version">
+                        <option value="">Loading...</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="erase-all">
+                    <label for="erase-all">Erase all flash before flashing</label>
+                </div>
+
+                <button id="flash-btn" class="btn">Flash Firmware</button>
+
+                <div id="progress-container">
+                    <div id="progress-bar"><div id="progress-fill"></div></div>
+                    <div id="progress-text"></div>
+                </div>
+            </div>
+
+            <div class="card log-card">
+                <pre id="log"></pre>
+            </div>
+        </div>
+
+        <div class="card instructions" id="instructions-content">
+            <h2>Bootloader Mode Instructions</h2>
+
+            <div id="atoms3-info">
+                <h3>M5Stack AtomS3</h3>
+                <ol>
+                    <li>Connect the AtomS3 to your computer via USB-C</li>
+                    <li>Press and <strong>hold</strong> the side button (the only button on the side)</li>
+                    <li>Keep holding for <strong>2 seconds</strong> until the green LED inside turns on</li>
+                    <li>Release the button</li>
+                    <li>The device is now in download mode (green LED indicates bootloader mode)</li>
+                    <li>Click <strong>Flash Firmware</strong> above and select the device in the browser serial prompt</li>
+                </ol>
+            </div>
+
+            <div id="esp32s3-info" class="hidden">
+                <h3>Generic ESP32-S3 Dev Module</h3>
+                <ol>
+                    <li>Connect the board to your computer via USB</li>
+                    <li>Press and <strong>hold</strong> the <span class="key">BOOT</span> button (<span class="key">GPIO0</span>)</li>
+                    <li>While holding <span class="key">BOOT</span>, press and release the <span class="key">EN</span> / <span class="key">RST</span> button</li>
+                    <li>Release the <span class="key">BOOT</span> button</li>
+                    <li>The device is now in download mode</li>
+                    <li>Click <strong>Flash Firmware</strong> above and select the device in the browser serial prompt</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card about-card">
+            <h2>About TGPad-NS</h2>
+            <p>TGPad-NS turns your phone or tablet into a Nintendo Switch-style gamepad controller. It runs on an ESP32-S3 board with native USB HID output — no drivers needed on the host computer.</p>
+            <p style="margin-top:12px">
+                <a href="https://github.com/controllercustom/tgpadns" target="_blank">View on GitHub →</a>
+            </p>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
