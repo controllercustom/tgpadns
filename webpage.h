@@ -36,7 +36,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>TGPad-NS v1.0.0 Gamepad</title>
+    <title>TGPad-NS 1.0.1 Gamepad</title>
     <style>
         :root {
             --bg-chassis: #e0e0d1;

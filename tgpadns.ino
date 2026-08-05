@@ -38,7 +38,7 @@
 #endif
 #include <esp_wifi.h>
 
-#define VERSION "1.0.0"
+#define VERSION "1.0.1"
 
 // Uncomment next line and change the password to enable OTA authentication:
 // #define OTA_PASS "your-password-here"
