@@ -1,0 +1,44 @@
+{
+  "versions": [
+    "v1.1.0",
+    "v1.0.1",
+    "v1.0.0",
+    "latest"
+  ],
+  "latest": "v1.1.0",
+  "flashLayout": [
+    {
+      "file": "bootloader.bin",
+      "address": 0
+    },
+    {
+      "file": "partitions.bin",
+      "address": 32768
+    },
+    {
+      "file": "boot_app0.bin",
+      "address": 57344
+    },
+    {
+      "file": "firmware.bin",
+      "address": 65536
+    }
+  ],
+  "boards": {
+    "esp32s3": {
+      "name": "Generic ESP32-S3 Dev Module"
+    },
+    "atoms3": {
+      "name": "M5Stack AtomS3"
+    },
+    "tdongle_s3": {
+      "name": "LilyGo T-Dongle-S3"
+    },
+    "tdongle_s3_plus": {
+      "name": "LilyGo T-Dongle-S3-Plus"
+    },
+    "waveshare": {
+      "name": "Waveshare ESP32-S3-Touch-LCD-1.54"
+    }
+  }
+}
