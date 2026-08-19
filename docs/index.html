@@ -26,6 +26,9 @@
                     <select id="board">
                         <option value="atoms3">M5Stack AtomS3</option>
                         <option value="esp32s3">Generic ESP32-S3 Dev Module</option>
+                        <option value="tdongle_s3">LilyGo T-Dongle-S3 (16MB)</option>
+                        <option value="tdongle_s3_plus">LilyGo T-Dongle-S3-Plus (16MB)</option>
+                        <option value="waveshare">Waveshare ESP32-S3-Touch-LCD-1.54 (16MB)</option>
                     </select>
                 </div>
 
@@ -78,6 +81,42 @@
                     <li>Release the <span class="key">BOOT</span> button</li>
                     <li>The device is now in download mode</li>
                     <li>Click <strong>Flash Firmware</strong> above and select the device in the browser serial prompt</li>
+                </ol>
+            </div>
+
+            <div id="tdongle_s3-info" class="hidden">
+                <h3>LilyGo T-Dongle-S3</h3>
+                <ol>
+                    <li>Connect the T-Dongle-S3 to your computer via USB-C</li>
+                    <li>Press and <strong>hold</strong> the <span class="key">BOOT</span> button (<span class="key">GPIO0</span>) while plugging in the USB cable</li>
+                    <li>Release the <span class="key">BOOT</span> button once connected</li>
+                    <li>The device is now in download mode</li>
+                    <li>Click <strong>Flash Firmware</strong> above and select the device in the browser serial prompt</li>
+                    <li>After flashing, unplug and re-power the device <em>without</em> holding <span class="key">BOOT</span> to boot the new firmware</li>
+                </ol>
+            </div>
+
+            <div id="tdongle_s3_plus-info" class="hidden">
+                <h3>LilyGo T-Dongle-S3-Plus</h3>
+                <ol>
+                    <li>Connect the T-Dongle-S3-Plus to your computer via USB-C</li>
+                    <li>Press and <strong>hold</strong> the <span class="key">BOOT</span> button (<span class="key">GPIO0</span>) while plugging in the USB cable</li>
+                    <li>Release the <span class="key">BOOT</span> button once connected</li>
+                    <li>The device is now in download mode</li>
+                    <li>Click <strong>Flash Firmware</strong> above and select the device in the browser serial prompt</li>
+                    <li>After flashing, unplug and re-power the device <em>without</em> holding <span class="key">BOOT</span> to boot the new firmware</li>
+                </ol>
+            </div>
+
+            <div id="waveshare-info" class="hidden">
+                <h3>Waveshare ESP32-S3-Touch-LCD-1.54</h3>
+                <ol>
+                    <li>Connect the board to your computer via USB-C</li>
+                    <li>Press and <strong>hold</strong> the <span class="key">BOOT</span> button (<span class="key">GPIO0</span>) while plugging in the USB cable</li>
+                    <li>Release the <span class="key">BOOT</span> button once connected</li>
+                    <li>The device is now in download mode (native USB CDC)</li>
+                    <li>Click <strong>Flash Firmware</strong> above and select the device in the browser serial prompt</li>
+                    <li>After flashing, unplug and re-power the device <em>without</em> holding <span class="key">BOOT</span> to boot the new firmware</li>
                 </ol>
             </div>
         </div>

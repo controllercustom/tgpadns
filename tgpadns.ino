@@ -36,9 +36,80 @@
 #include <lgfx/v1/platforms/esp32/Bus_SPI.hpp>
 #include <lgfx/v1/platforms/esp32/Light_PWM.hpp>
 #endif
+// T-Dongle-S3 / T-Dongle-S3-Plus detection: the vendored TFT_eSPI library
+// (lib/TFT_eSPI, configured for the 160x80 ST7735) is only present on the
+// tdongle_s3* profiles, so probe the include path at preprocess time.
+// Require hardware-CDC USB mode (ARDUINO_USB_MODE==1, i.e. USBMode=hwcdc, which
+// all tdongle_s3* profiles select) so a stray global TFT_eSPI can never enable
+// the T-Dongle display path on AtomS3 / generic ESP32-S3 builds.
+// Waveshare ESP32-S3-Touch-LCD-1.54: selected explicitly via -DT_WAVESHARE_154 on
+// the build command line (see the `waveshare` profile in sketch.yaml). It must be
+// checked BEFORE the T-Dongle __has_include probe below, which would otherwise also
+// fire for this board (both use USBMode=hwcdc and would otherwise share a display path).
+#if defined(T_WAVESHARE_154)
+#  define WAVESHARE_154
+#  include <Arduino_GFX_Library.h>
+// TFT_eSPI 2.5.43 crashed in our Waveshare ESP32-S3-Touch-LCD-1.54 testing
+// (StoreProhibited in begin_tft_write) on both core 3.x and 2.0.x, so the
+// Waveshare uses the proven example stack: core 3.2.0 + GFX Library for
+// Arduino 1.6.0 (the T-Dongle's ST7735 continues to work on TFT_eSPI 2.5.43 —
+// the crash is specific to this board). Adapter below exposes the TFT_eSPI API
+// subset the sketch uses on top of Arduino_GFX.
+#  define TFT_BLACK BLACK
+#  define TFT_CYAN  CYAN
+#  define TFT_WHITE WHITE
+#  define TFT_BL    46
+class WS154Display {
+public:
+  Arduino_GFX* gfx;
+  WS154Display(Arduino_GFX* g) : gfx(g) {}
+  void init() {
+    gfx->begin();
+    gfx->setTextWrap(false);
+  }
+  void setRotation(uint8_t r) { gfx->setRotation(r); }
+  void fillScreen(uint16_t c) { gfx->fillScreen(c); }
+  void setCursor(int16_t x, int16_t y) { gfx->setCursor(x, y); }
+  void setTextSize(uint8_t s) { gfx->setTextSize(s); }
+  void setTextFont(uint8_t f) { gfx->setTextSize(f); }
+  void setTextColor(uint16_t fg, uint16_t bg) { gfx->setTextColor(fg, bg); }
+  void setTextColor(uint16_t fg) { gfx->setTextColor(fg); }
+  template<typename T> void print(const T& v) { gfx->print(v); }
+  template<typename T> void println(const T& v) { gfx->println(v); }
+  void println() { gfx->println(); }
+  void printf(const char* fmt, ...) __attribute__((format(printf, 2, 3))) {
+    va_list ap; va_start(ap, fmt);
+    char buf[128];
+    vsnprintf(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
+    gfx->print(buf);
+  }
+  int16_t textWidth(const char* s) {
+    int16_t x1, y1; uint16_t w, h;
+    gfx->getTextBounds(s, 0, 0, &x1, &y1, &w, &h);
+    return w;
+  }
+  int16_t width() { return gfx->width(); }
+};
+#elif defined(__has_include)
+#  if __has_include(<TFT_eSPI.h>) && defined(ARDUINO_USB_MODE) && (ARDUINO_USB_MODE == 1)
+#    define T_DONGLE_S3
+#    include <TFT_eSPI.h>
+#  endif
+#endif
 #include <esp_wifi.h>
+#include <cstdarg>
 
-#define VERSION "1.0.1"
+// On T-Dongle/Waveshare (USBMode=hwcdc) the USB-Serial/JTAG port is taken over
+// by the TinyUSB gamepad stack at runtime (NSLiteController's USB.begin() →
+// tinyusb_init()), so route all Serial debug output to UART0 (Serial0). On
+// AtomS3 / generic ESP32-S3 (CDCOnBoot=default) Serial already IS Serial0, so
+// the define is a no-op there.
+#if !defined(ARDUINO_M5STACK_ATOMS3)
+#define Serial Serial0
+#endif
+
+#define VERSION "1.1.0"
 
 // Uncomment next line and change the password to enable OTA authentication:
 // #define OTA_PASS "your-password-here"
@@ -46,6 +117,12 @@
 NSLiteController Gamepad;
 #ifdef ARDUINO_M5STACK_ATOMS3
 M5GFX display;
+#endif
+#ifdef T_DONGLE_S3
+TFT_eSPI display;
+#endif
+#ifdef WAVESHARE_154
+WS154Display display(new Arduino_ST7789(new Arduino_ESP32SPI(45, 21, 38, 39, -1), 40, 0, true, 240, 240));
 #endif
 WebServer server(80);
 WebSocketsServer webSocket(81);
@@ -75,6 +152,10 @@ WiFiManagerParameter customHostnameParam("hostname", "Device hostname", "tgpadns
 
 #ifdef ARDUINO_M5STACK_ATOMS3
 #define RESET_BUTTON_PIN 41
+#elif defined(T_DONGLE_S3)
+#define RESET_BUTTON_PIN 0
+#elif defined(WAVESHARE_154)
+#define RESET_BUTTON_PIN 5
 #else
 #define RESET_BUTTON_PIN 0
 #endif
@@ -325,6 +406,88 @@ static void updateDisplay() {
   }
   display.printf("Clients: %d", wsClientCount);
 }
+#elif defined(T_DONGLE_S3) || defined(WAVESHARE_154)
+// Per-board status font. The Waveshare's 240x240 panel uses GLCD text scale 3
+// (15x24px per char, 16 chars/line, 24px line height) — scale 4 (20px/char, 12
+// chars/line) truncated a 13-char IP. The 160x80 T-Dongle stays on font 2
+// (10x16px, 16px line height).
+#ifdef WAVESHARE_154
+#define STATUS_FONT   3
+#define STATUS_LINE_H 24
+#else
+#define STATUS_FONT   2
+#define STATUS_LINE_H 16
+#endif
+// Word-wrap a string to the panel width. Lines break at the last space inside the
+// fitting prefix when there is one; a word longer than the panel is split mid-word.
+// Returns the number of lines printed (>= 1), so callers can advance their y cursor.
+static int printWrap(const char* s) {
+  char buf[72];
+  snprintf(buf, sizeof(buf), "%s", s);
+  int lines = 0;
+  const char* p = buf;
+  while (*p != '\0') {
+    char line[72];
+    int n = 0;
+    int lastSpace = -1;
+    bool overflow = false;
+    for (;;) {
+      line[n] = p[n];
+      line[n + 1] = '\0';
+      if (display.textWidth(line) > display.width()) { overflow = true; break; }
+      if (p[n] == ' ') lastSpace = n;
+      n++;
+      if (p[n] == '\0') break;
+    }
+    int take;
+    if (!overflow) take = n;                  // whole remainder fits — one line
+    else if (lastSpace > 0) take = lastSpace; // break at the last space in the prefix
+    else take = (n > 0) ? n : 1;              // mid-word break (n chars fit)
+    line[take] = '\0';
+    display.println(line);
+    lines++;
+    p += take;
+    while (*p == ' ') p++;
+  }
+  if (lines == 0) { display.println(); lines = 1; }
+  return lines;
+}
+
+static void bootMsg(const char* s1, const char* s2, const char* s3) {
+  display.fillScreen(TFT_BLACK);
+  display.setCursor(0, 0);
+  display.setTextFont(STATUS_FONT);
+  display.setTextColor(TFT_CYAN, TFT_BLACK);
+  char title[32];
+  snprintf(title, sizeof(title), "TGPad-NS v%s", VERSION);
+  int y = printWrap(title) * STATUS_LINE_H;
+  display.setTextColor(TFT_WHITE, TFT_BLACK);
+  if (s1) { display.setCursor(0, y); y += printWrap(s1) * STATUS_LINE_H; }
+  if (s2) { display.setCursor(0, y); y += printWrap(s2) * STATUS_LINE_H; }
+  if (s3) { display.setCursor(0, y); printWrap(s3); }
+}
+
+static void updateDisplay() {
+  display.fillScreen(TFT_BLACK);
+  display.setCursor(0, 0);
+  display.setTextFont(STATUS_FONT);
+  display.setTextColor(TFT_CYAN, TFT_BLACK);
+  char title[32];
+  snprintf(title, sizeof(title), "TGPad-NS v%s", VERSION);
+  int y = printWrap(title) * STATUS_LINE_H;
+  display.setTextColor(TFT_WHITE, TFT_BLACK);
+  char buf[48];
+  if (WiFi.status() == WL_CONNECTED) {
+    snprintf(buf, sizeof(buf), "%s", WiFi.localIP().toString().c_str());
+    display.setCursor(0, y); y += printWrap(buf) * STATUS_LINE_H;
+    snprintf(buf, sizeof(buf), "%s.local", hostname);
+    display.setCursor(0, y); y += printWrap(buf) * STATUS_LINE_H;
+  } else {
+    display.setCursor(0, y); display.println("No WiFi"); y += STATUS_LINE_H;
+  }
+  snprintf(buf, sizeof(buf), "Clients: %d", wsClientCount);
+  display.setCursor(0, y); printWrap(buf);
+}
 #else
 static void bootMsg(const char*, const char*, const char*) {}
 static void updateDisplay() {}
@@ -336,8 +499,25 @@ void setup() {
   delay(500);
   Serial.println("\n[INIT] Starting TGPad-NS...");
 
+#ifdef T_DONGLE_S3_PLUS
+  Serial.println("[BOARD] LilyGo T-Dongle-S3-Plus");
+#elif defined(T_DONGLE_S3)
+  Serial.println("[BOARD] LilyGo T-Dongle-S3");
+#elif defined(WAVESHARE_154)
+  Serial.println("[BOARD] Waveshare ESP32-S3-Touch-LCD-1.54");
+#endif
+
 #ifdef ARDUINO_M5STACK_ATOMS3
   initAtomS3Display();
+#elif defined(T_DONGLE_S3)
+  display.init();
+  display.setRotation(1);
+  pinMode(38, OUTPUT);
+  digitalWrite(38, 0);
+#elif defined(WAVESHARE_154)
+  display.init();
+  pinMode(TFT_BL, OUTPUT);
+  digitalWrite(TFT_BL, HIGH);
 #endif
   bootMsg("Starting...", nullptr, nullptr);
 
@@ -521,7 +701,7 @@ static void handleResetButton(unsigned long now) {
   } else if (resetPressed && resetButtonWasLow) {
     if (now - resetPressStart >= 5000) {
       Serial.println("[WiFi] Button held 5s — erasing credentials and rebooting");
-#ifdef ARDUINO_M5STACK_ATOMS3
+#if defined(ARDUINO_M5STACK_ATOMS3) || defined(T_DONGLE_S3) || defined(WAVESHARE_154)
       bootMsg("Resetting", "WiFi...", nullptr);
 #endif
       delay(100);

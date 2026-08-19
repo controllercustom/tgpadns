@@ -18,6 +18,9 @@ const els = {
   progressText: document.getElementById('progress-text'),
   atoms3Info: document.getElementById('atoms3-info'),
   esp32s3Info: document.getElementById('esp32s3-info'),
+  tdongleS3Info: document.getElementById('tdongle_s3-info'),
+  tdongleS3PlusInfo: document.getElementById('tdongle_s3_plus-info'),
+  waveshareInfo: document.getElementById('waveshare-info'),
 };
 
 const BAUD = 921600;
@@ -81,6 +84,9 @@ function updateInstructions() {
   const board = els.board.value;
   els.atoms3Info.classList.toggle('hidden', board !== 'atoms3');
   els.esp32s3Info.classList.toggle('hidden', board !== 'esp32s3');
+  els.tdongleS3Info.classList.toggle('hidden', board !== 'tdongle_s3');
+  els.tdongleS3PlusInfo.classList.toggle('hidden', board !== 'tdongle_s3_plus');
+  els.waveshareInfo.classList.toggle('hidden', board !== 'waveshare');
 }
 
 function flashLayout() {

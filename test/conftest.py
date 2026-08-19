@@ -4,10 +4,9 @@ import os
 import pytest
 
 _MCLIENT_MSG = (
-    "multi-client test: requires TGAPDNS_MULTICLIENT=1 (a board whose "
-    "WebSocketsServer reports distinct per-client slot indices, e.g. the "
-    "generic ESP32-S3 dev module). The M5Stack AtomS3 reports slot 0 for "
-    "every client, so multi-client OR-combine cannot be verified there."
+    "multi-client test is skipped unless enabled with TGAPDNS_MULTICLIENT=1 "
+    "(verified passing on both the generic ESP32-S3 dev module and the "
+    "M5Stack AtomS3 — distinct per-client slot indices on both)."
 )
 
 

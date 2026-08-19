@@ -20,4 +20,51 @@ profiles:
       - dir: lib/WiFiManager
       - dir: lib/WebSockets
 
+  tdongle_s3:
+    notes: LilyGo T-Dongle-S3 - 160x80 ST7735 via vendored TFT_eSPI
+    fqbn: esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=disabled,USBMode=hwcdc,CDCOnBoot=cdc,FlashMode=qio,LoopCore=1
+    platforms:
+      - platform: esp32:esp32 (3.3.10)
+        platform_index_url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
+    port_config:
+      baudrate: 115200
+    libraries:
+      - dir: lib/ESP32nslite
+      - dir: lib/WiFiManager
+      - dir: lib/WebSockets
+      - dir: lib/TFT_eSPI
+
+  tdongle_s3_plus:
+    notes: LilyGo T-Dongle-S3-Plus - same display as base; build with -DT_DONGLE_S3_PLUS
+    fqbn: esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=disabled,USBMode=hwcdc,CDCOnBoot=cdc,FlashMode=qio,LoopCore=1
+    platforms:
+      - platform: esp32:esp32 (3.3.10)
+        platform_index_url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
+    port_config:
+      baudrate: 115200
+    libraries:
+      - dir: lib/ESP32nslite
+      - dir: lib/WiFiManager
+      - dir: lib/WebSockets
+      - dir: lib/TFT_eSPI
+
+  waveshare:
+    notes: >-
+      Waveshare ESP32-S3-Touch-LCD-1.54 - 240x240 ST7789 via Arduino_GFX
+      (GFX Library for Arduino 1.6.0), the same proven stack as the Waveshare
+      examples. TFT_eSPI 2.5.43 crashed on this board on both core 3.x and
+      2.0.x. Core pinned to 3.2.0 (GFX 1.6.0 is incompatible with 3.3.x).
+      FQBN matches the examples. Build with -DT_WAVESHARE_154.
+    fqbn: esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi,USBMode=hwcdc,CDCOnBoot=cdc
+    platforms:
+      - platform: esp32:esp32 (3.2.0)
+        platform_index_url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
+    port_config:
+      baudrate: 115200
+    libraries:
+      - dir: lib/ESP32nslite
+      - dir: lib/WiFiManager
+      - dir: lib/WebSockets
+      - GFX Library for Arduino (1.6.0)
+
 default_profile: atoms3
